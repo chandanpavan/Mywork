@@ -1,0 +1,8 @@
+<script>
+    function square(n, base = n) {
+    if (n === 0) 
+    return 0;
+    return base + square(n - 1, base);
+}
+document.writeln(square(5));
+</script>
