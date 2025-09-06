@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Esports Tournament Registration</title>
+        <style>
+            :root {
+                --bg: #0b0f14;
+                --card: #111722;
+                --muted: #8aa0b4;
+                --text: #e6edf3;
+                --accent: #4cc9f0;
+                --accent-2: #a78bfa;
+                --danger: #ef4444;
+                --success: #22c55e;
+                --border: #1f2937;
+            }
+
+            * { box-sizing: border-box; }
+
+            body {
+                margin: 0;
+                font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+                background: radial-gradient(1200px 600px at 20% -10%, rgba(76, 201, 240, 0.12), transparent 60%),
+                            radial-gradient(1000px 500px at 110% 10%, rgba(167, 139, 250, 0.12), transparent 60%),
+                            var(--bg);
+                color: var(--text);
+                line-height: 1.5;
+            }
+
+            .container {
+                max-width: 980px;
+                margin: 32px auto;
+                padding: 0 16px;
+            }
+
+            .card {
+                background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+                border: 1px solid var(--border);
+                backdrop-filter: blur(6px);
+                border-radius: 16px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+                overflow: hidden;
+            }
+
+            header.hero {
+                padding: 28px 28px 12px 28px;
+                border-bottom: 1px solid var(--border);
+                background: linear-gradient(90deg, rgba(76,201,240,0.12), rgba(167,139,250,0.12));
+            }
+
+            .title {
+                margin: 0 0 6px 0;
+                font-size: 28px;
+                letter-spacing: 0.5px;
+            }
+
+            .subtitle {
+                margin: 0;
+                color: var(--muted);
+                font-size: 14px;
+            }
+
+            form {
+                padding: 24px;
+                display: grid;
+                gap: 22px;
+            }
+
+            .section-title {
+                margin: 6px 0 0 0;
+                font-size: 16px;
+                font-weight: 600;
+                color: var(--accent);
+                letter-spacing: 0.3px;
+            }
+
+            .grid {
+                display: grid;
+                gap: 16px;
+            }
+
+            @media (min-width: 720px) {
+                .grid.cols-2 { grid-template-columns: 1fr 1fr; }
+                .grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+            }
+
+            label { font-size: 14px; color: var(--muted); display: block; margin-bottom: 6px; }
+
+            input[type="text"],
+            input[type="email"],
+            input[type="tel"],
+            select,
+            .input-like,
+            textarea {
+                width: 100%;
+                padding: 12px 12px;
+                border-radius: 10px;
+                border: 1px solid var(--border);
+                background: #0e141f;
+                color: var(--text);
+                outline: none;
+                transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            }
+
+            textarea { resize: vertical; min-height: 84px; }
+
+            input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(76,201,240,0.15); }
+
+            .inline {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 12px 18px;
+                align-items: center;
+            }
+
+            .inline .choice {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 12px;
+                border: 1px solid var(--border);
+                border-radius: 999px;
+                background: #0e141f;
+            }
+
+            .muted { color: var(--muted); font-size: 13px; }
+
+            .roster {
+                display: grid;
+                gap: 12px;
+            }
+
+            .roster-row {
+                display: grid;
+                gap: 12px;
+            }
+
+            @media (min-width: 680px) {
+                .roster-row { grid-template-columns: 2fr 2fr 1.2fr auto; align-items: end; }
+            }
+
+            .btn {
+                appearance: none;
+                border: none;
+                padding: 12px 16px;
+                border-radius: 10px;
+                background: linear-gradient(135deg, var(--accent), var(--accent-2));
+                color: #001018;
+                font-weight: 700;
+                letter-spacing: 0.3px;
+                cursor: pointer;
+                transition: transform 0.05s ease, filter 0.15s ease;
+            }
+
+            .btn:hover { filter: brightness(1.1); }
+            .btn:active { transform: translateY(1px); }
+
+            .btn.secondary {
+                background: #0e141f;
+                color: var(--text);
+                border: 1px solid var(--border);
+            }
+
+            .btn.icon {
+                padding: 10px 12px;
+                border-radius: 8px;
+                line-height: 0;
+            }
+
+            .actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+
+            .error { color: var(--danger); font-size: 13px; }
+            .success { color: var(--success); font-size: 14px; }
+
+            footer small { color: var(--muted); }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="card">
+                <header class="hero">
+                    <h1 class="title">Esports Tournament Registration</h1>
+                    <p class="subtitle">Register your team or as a solo player. We will email your confirmation and match details.</p>
+                </header>
+                <form id="registration-form" action="#" method="post">
+                    <div>
+                        <p class="section-title">Competition</p>
+                        <div class="grid cols-3">
+                            <div>
+                                <label for="competitionType">Competition Type</label>
+                                <div class="inline" id="competitionType">
+                                    <label class="choice"><input type="radio" name="competitionType" value="team" checked> Team</label>
+                                    <label class="choice"><input type="radio" name="competitionType" value="solo"> Solo</label>
+                                </div>
+                            </div>
+                            <div>
+                                <label for="game">Game Title</label>
+                                <select name="game" id="game" required>
+                                    <option value="" disabled selected>Select a game</option>
+                                    <option>Valorant</option>
+                                    <option>CS2</option>
+                                    <option>League of Legends</option>
+                                    <option>Dota 2</option>
+                                    <option>Rocket League</option>
+                                    <option>Apex Legends</option>
+                                    <option>Fortnite</option>
+                                    <option>PUBG Mobile</option>
+                                    <option>Mobile Legends</option>
+                                    <option>Free Fire</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="division">Division</label>
+                                <select name="division" id="division" required>
+                                    <option value="" disabled selected>Select division</option>
+                                    <option>Pro</option>
+                                    <option>Amateur</option>
+                                    <option>Student</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid cols-3">
+                            <div>
+                                <label for="platform">Platform</label>
+                                <select name="platform" id="platform" required>
+                                    <option value="" disabled selected>Select platform</option>
+                                    <option>PC</option>
+                                    <option>PlayStation</option>
+                                    <option>Xbox</option>
+                                    <option>Mobile</option>
+                                    <option>Cross-play</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="region">Region</label>
+                                <select name="region" id="region" required>
+                                    <option value="" disabled selected>Select region</option>
+                                    <option>North America</option>
+                                    <option>Europe</option>
+                                    <option>South America</option>
+                                    <option>Asia</option>
+                                    <option>Oceania</option>
+                                    <option>MENA</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="timezone">Preferred Timezone</label>
+                                <select name="timezone" id="timezone" required>
+                                    <option value="" disabled selected>Select timezone</option>
+                                    <option>GMT -08 (PT)</option>
+                                    <option>GMT -05 (ET)</option>
+                                    <option>GMT +00 (UTC)</option>
+                                    <option>GMT +01 (CET)</option>
+                                    <option>GMT +05:30 (IST)</option>
+                                    <option>GMT +08 (SGT)</option>
+                                    <option>GMT +10 (AEST)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <p class="section-title">Team</p>
+                        <div class="grid cols-2">
+                            <div>
+                                <label for="teamName">Team Name</label>
+                                <input type="text" id="teamName" name="teamName" placeholder="Enter your team name" required>
+                            </div>
+                            <div>
+                                <label for="orgName">Organization (optional)</label>
+                                <input type="text" id="orgName" name="orgName" placeholder="If affiliated with an org">
+                            </div>
+                        </div>
+                        <div class="grid cols-3">
+                            <div>
+                                <label for="captainName">Captain Full Name</label>
+                                <input type="text" id="captainName" name="captainName" placeholder="First and last name" required>
+                            </div>
+                            <div>
+                                <label for="captainEmail">Captain Email</label>
+                                <input type="email" id="captainEmail" name="captainEmail" placeholder="name@example.com" required>
+                            </div>
+                            <div>
+                                <label for="captainDiscord">Captain Discord</label>
+                                <input type="text" id="captainDiscord" name="captainDiscord" placeholder="user#1234" required>
+                            </div>
+                        </div>
+                        <div class="grid cols-3">
+                            <div>
+                                <label for="country">Country</label>
+                                <input type="text" id="country" name="country" placeholder="e.g., India" required>
+                            </div>
+                            <div>
+                                <label for="city">City</label>
+                                <input type="text" id="city" name="city" placeholder="e.g., Mumbai" required>
+                            </div>
+                            <div>
+                                <label for="phone">Contact Number</label>
+                                <input type="tel" id="phone" name="phone" placeholder="e.g., +91 98765 43210" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <p class="section-title">Roster</p>
+                        <p class="muted" id="rosterHint">Add 3–6 players for team registration. Solo will auto-fill one slot.</p>
+                        <div class="roster" id="roster"></div>
+                        <div class="actions">
+                            <button type="button" class="btn secondary" id="addPlayerBtn">+ Add Player</button>
+                            <span class="muted" id="rosterCount"></span>
+                        </div>
+                        <p class="error" id="rosterError" hidden></p>
+                    </div>
+
+                    <div>
+                        <p class="section-title">Notes</p>
+                        <label for="notes">Special Requests (optional)</label>
+                        <textarea id="notes" name="notes" placeholder="Share scheduling constraints, seeding info, or other notes"></textarea>
+                    </div>
+
+                    <div>
+                        <p class="section-title">Agreements</p>
+                        <div class="inline">
+                            <label class="choice"><input type="checkbox" name="agreeRules" id="agreeRules" required> I agree to the tournament rules</label>
+                            <label class="choice"><input type="checkbox" name="agreeConduct" id="agreeConduct" required> I will follow the code of conduct</label>
+                            <label class="choice"><input type="checkbox" name="over13" id="over13" required> All players are 13+ years old</label>
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <button type="submit" class="btn">Submit Registration</button>
+                        <span class="success" id="submitSuccess" hidden>Registration submitted. Check your email for confirmation.</span>
+                    </div>
+                </form>
+                <footer style="padding: 10px 24px 24px 24px;">
+                    <small>By registering, you consent to be contacted regarding schedules and updates for this event.</small>
+                </footer>
+            </div>
+        </div>
+
+        <script>
+            (function () {
+                const rosterContainer = document.getElementById('roster');
+                const rosterCountEl = document.getElementById('rosterCount');
+                const rosterErrorEl = document.getElementById('rosterError');
+                const addPlayerBtn = document.getElementById('addPlayerBtn');
+                const formEl = document.getElementById('registration-form');
+                const submitSuccessEl = document.getElementById('submitSuccess');
+
+                const COMPETITION_TYPE_INPUTS = Array.from(document.querySelectorAll('input[name="competitionType"]'));
+                const ROSTER_LIMIT = 6;
+                const MIN_TEAM_PLAYERS = 3;
+
+                function getCompetitionType() {
+                    const selected = COMPETITION_TYPE_INPUTS.find((i) => i.checked);
+                    return selected ? selected.value : 'team';
+                }
+
+                function updateRosterCountText() {
+                    const count = rosterContainer.querySelectorAll('.roster-row').length;
+                    rosterCountEl.textContent = count + ' / ' + ROSTER_LIMIT + ' players';
+                }
+
+                function createRosterRow(index) {
+                    const row = document.createElement('div');
+                    row.className = 'roster-row';
+
+                    const ignId = 'ign_' + index;
+                    const discordId = 'discord_' + index;
+                    const roleId = 'role_' + index;
+
+                    row.innerHTML =
+                        '<div>' +
+                            '<label for="' + ignId + '">In-Game Name</label>' +
+                            '<input type="text" id="' + ignId + '" name="roster[' + index + '][ign]" placeholder="Player IGN" required>' +
+                        '</div>' +
+                        '<div>' +
+                            '<label for="' + discordId + '">Discord</label>' +
+                            '<input type="text" id="' + discordId + '" name="roster[' + index + '][discord]" placeholder="user#1234" required>' +
+                        '</div>' +
+                        '<div>' +
+                            '<label for="' + roleId + '">Role</label>' +
+                            '<input type="text" id="' + roleId + '" name="roster[' + index + '][role]" placeholder="e.g., IGL, Support" required>' +
+                        '</div>' +
+                        '<div class="actions">' +
+                            '<button type="button" class="btn icon secondary" aria-label="Remove player">✕</button>' +
+                        '</div>';
+
+                    const removeBtn = row.querySelector('button');
+                    removeBtn.addEventListener('click', function () {
+                        row.remove();
+                        updateRosterCountText();
+                        validateRoster();
+                        updateAddButtonState();
+                    });
+
+                    return row;
+                }
+
+                function clearRoster() {
+                    rosterContainer.innerHTML = '';
+                }
+
+                function initializeRosterForType(type) {
+                    clearRoster();
+                    if (type === 'solo') {
+                        rosterContainer.appendChild(createRosterRow(0));
+                    } else {
+                        for (let i = 0; i < MIN_TEAM_PLAYERS; i++) {
+                            rosterContainer.appendChild(createRosterRow(i));
+                        }
+                    }
+                    updateRosterCountText();
+                    updateAddButtonState();
+                }
+
+                function updateAddButtonState() {
+                    const count = rosterContainer.querySelectorAll('.roster-row').length;
+                    addPlayerBtn.disabled = count >= ROSTER_LIMIT || getCompetitionType() === 'solo';
+                }
+
+                function validateRoster() {
+                    rosterErrorEl.hidden = true;
+                    const type = getCompetitionType();
+                    const count = rosterContainer.querySelectorAll('.roster-row').length;
+                    if (type === 'team' && count < MIN_TEAM_PLAYERS) {
+                        rosterErrorEl.textContent = 'Please add at least ' + MIN_TEAM_PLAYERS + ' players for a team.';
+                        rosterErrorEl.hidden = false;
+                        return false;
+                    }
+                    if (count === 0) {
+                        rosterErrorEl.textContent = 'Please add at least one player.';
+                        rosterErrorEl.hidden = false;
+                        return false;
+                    }
+                    return true;
+                }
+
+                addPlayerBtn.addEventListener('click', function () {
+                    const count = rosterContainer.querySelectorAll('.roster-row').length;
+                    if (count < ROSTER_LIMIT) {
+                        rosterContainer.appendChild(createRosterRow(count));
+                        updateRosterCountText();
+                        updateAddButtonState();
+                    }
+                });
+
+                COMPETITION_TYPE_INPUTS.forEach((input) => {
+                    input.addEventListener('change', function () {
+                        const type = getCompetitionType();
+                        document.getElementById('teamName').required = type === 'team';
+                        document.getElementById('orgName').disabled = type === 'solo';
+                        document.getElementById('rosterHint').textContent = type === 'solo'
+                            ? 'Solo registration: enter your own details.'
+                            : 'Add 3–6 players for team registration.';
+                        initializeRosterForType(type);
+                    });
+                });
+
+                formEl.addEventListener('submit', function (e) {
+                    submitSuccessEl.hidden = true;
+                    const rosterOk = validateRoster();
+                    if (!formEl.checkValidity() || !rosterOk) {
+                        e.preventDefault();
+                        formEl.reportValidity();
+                        return;
+                    }
+                    e.preventDefault();
+                    submitSuccessEl.hidden = false;
+                    formEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+
+                initializeRosterForType(getCompetitionType());
+            })();
+        </script>
+    </body>
+</html>

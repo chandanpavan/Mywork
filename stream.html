@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Stream - GRINDZONE</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0F0F0F 0%, #1A1A1A 100%);
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(90deg, #6B46C1 0%, #EC4899 100%);
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 20px rgba(107, 70, 193, 0.3);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #F472B6, #A855F7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(244, 114, 182, 0.5);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid #EF4444;
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #EF4444;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(45, 45, 45, 0.9);
+            padding: 0.75rem 1.25rem;
+            border-bottom: 1px solid rgba(107, 70, 193, 0.25);
+            backdrop-filter: blur(6px);
+        }
+
+        .nav-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .nav-center {
+            display: flex;
+            gap: 0.75rem;
+            flex: 1;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-group {
+            position: relative;
+        }
+
+        .search-input {
+            background: rgba(55, 65, 81, 0.8);
+            border: 2px solid rgba(107, 70, 193, 0.3);
+            border-radius: 25px;
+            padding: 0.6rem 0.9rem;
+            color: white;
+            width: 200px;
+            min-height: 40px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #EC4899;
+            box-shadow: 0 0 15px rgba(236, 72, 153, 0.3);
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .nav-icons {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .nav-icon {
+            width: 38px;
+            height: 38px;
+            background: #000000;
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .nav-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke: #ffffff;
+            stroke-width: 1.8;
+            fill: none;
+        }
+
+        /* Main Layout */
+        .main-layout {
+            display: flex;
+            min-height: calc(100vh - 140px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: rgba(30, 30, 30, 0.96);
+            padding: 1.5rem 1rem;
+            border-right: 1px solid rgba(107, 70, 193, 0.25);
+            backdrop-filter: blur(4px);
+        }
+
+        .sidebar-logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-logo h2 {
+            background: linear-gradient(45deg, #6B46C1, #EC4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.5rem;
+        }
+
+        .greeting {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: linear-gradient(135deg, rgba(107, 70, 193, 0.1), rgba(236, 72, 153, 0.1));
+            border-radius: 10px;
+            border: 1px solid rgba(168, 85, 247, 0.2);
+        }
+
+        .greeting-text {
+            font-size: 0.9rem;
+            color: #A855F7;
+            margin-bottom: 0.5rem;
+        }
+
+        .username {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .menu-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            padding: 0.8rem 0.9rem;
+            color: #e5e7eb;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.25s ease;
+            position: relative;
+        }
+
+        .menu-link:hover, .menu-link.active {
+            background: linear-gradient(135deg, rgba(107, 70, 193, 0.18), rgba(236, 72, 153, 0.18));
+            transform: translateX(4px);
+        }
+
+        .menu-link.active::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 10px;
+            bottom: 10px;
+            width: 3px;
+            background: linear-gradient(180deg, #6B46C1, #EC4899);
+            border-radius: 3px;
+        }
+
+        .menu-icon {
+            width: 34px;
+            height: 34px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background: #000000;
+        }
+
+        .menu-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke: #ffffff;
+            stroke-width: 1.8;
+            fill: none;
+        }
+
+        .menu-link:hover .menu-icon {
+            background: #111111;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            border-top: 1px solid rgba(107, 70, 193, 0.3);
+            padding-top: 1rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        /* Stream Layout */
+        .stream-layout {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
+            height: calc(100vh - 200px);
+        }
+
+        /* Video Player */
+        .video-section {
+            background: #000;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .video-player {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .video-placeholder {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .play-button {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #6B46C1, #EC4899);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .play-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(236, 72, 153, 0.5);
+        }
+
+        .video-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .volume-slider {
+            flex: 1;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            outline: none;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #EC4899;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* Stream Info */
+        .stream-info {
+            background: rgba(45, 45, 45, 0.8);
+            border: 1px solid rgba(107, 70, 193, 0.3);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stream-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, #6B46C1, #EC4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stream-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .viewer-count {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #EF4444;
+            font-weight: bold;
+        }
+
+        .game-tag {
+            background: rgba(107, 70, 193, 0.3);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            border: 1px solid rgba(168, 85, 247, 0.4);
+        }
+
+        .streamer-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .streamer-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6B46C1, #EC4899);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .streamer-details h4 {
+            margin-bottom: 0.25rem;
+        }
+
+        .streamer-details p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        /* Chat Section */
+        .chat-section {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .chat-header {
+            background: rgba(45, 45, 45, 0.8);
+            border: 1px solid rgba(107, 70, 193, 0.3);
+            border-radius: 15px 15px 0 0;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chat-title {
+            font-weight: bold;
+            color: #A855F7;
+        }
+
+        .chat-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-control-btn {
+            background: rgba(107, 70, 193, 0.3);
+            border: 1px solid rgba(168, 85, 247, 0.4);
+            border-radius: 8px;
+            padding: 0.5rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .chat-control-btn:hover {
+            background: rgba(107, 70, 193, 0.5);
+        }
+
+        .chat-messages {
+            flex: 1;
+            background: rgba(30, 30, 30, 0.8);
+            border: 1px solid rgba(107, 70, 193, 0.3);
+            border-top: none;
+            padding: 1rem;
+            overflow-y: auto;
+            max-height: 400px;
+        }
+
+        .chat-message {
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6B46C1, #EC4899);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .message-content {
+            flex: 1;
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .message-username {
+            font-weight: bold;
+            color: #A855F7;
+        }
+
+        .message-time {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.8rem;
+        }
+
+        .message-text {
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.4;
+        }
+
+        .chat-input-section {
+            background: rgba(45, 45, 45, 0.8);
+            border: 1px solid rgba(107, 70, 193, 0.3);
+            border-radius: 0 0 15px 15px;
+            border-top: none;
+            padding: 1rem;
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: rgba(55, 65, 81, 0.8);
+            border: 2px solid rgba(107, 70, 193, 0.3);
+            border-radius: 25px;
+            padding: 0.75rem 1rem;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #EC4899;
+            box-shadow: 0 0 15px rgba(236, 72, 153, 0.3);
+        }
+
+        .chat-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .send-btn {
+            background: linear-gradient(135deg, #6B46C1, #EC4899);
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(236, 72, 153, 0.5);
+        }
+
+        /* Live Streams List */
+        .live-streams {
+            margin-top: 2rem;
+        }
+
+        .streams-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .streams-title {
+            font-size: 1.5rem;
+            background: linear-gradient(45deg, #6B46C1, #EC4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .streams-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .stream-card {
+            background: linear-gradient(135deg, rgba(45, 45, 45, 0.9), rgba(55, 65, 81, 0.9));
+            border: 2px solid rgba(107, 70, 193, 0.3);
+            border-radius: 15px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.4s ease;
+        }
+
+        .stream-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(107, 70, 193, 0.3);
+            border-color: #EC4899;
+        }
+
+        .stream-thumbnail {
+            height: 150px;
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stream-thumbnail::before {
+            content: '▶';
+            font-size: 2rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .stream-card-info {
+            padding: 1rem;
+        }
+
+        .stream-card-title {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #A855F7;
+        }
+
+        .stream-card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .stream-layout {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .chat-section {
+                height: 400px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-layout {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                position: fixed;
+                top: 0;
+                left: -100%;
+                height: 100vh;
+                z-index: 1000;
+                transition: left 0.3s ease;
+            }
+
+            .sidebar.open {
+                left: 0;
+            }
+
+            .streams-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .chat-message {
+            animation: slideIn 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">GRINDZONE</div>
+            <div class="header-right">
+                <div class="live-indicator">
+                    <div class="live-dot"></div>
+                    <span>LIVE</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <div></div>
+            <div class="nav-center">
+                <div class="search-group">
+                    <input type="text" class="search-input" placeholder="Search streams..." id="streamSearch">
+                </div>
+                <div class="search-group">
+                    <select class="search-input" id="gameFilter">
+                        <option value="">All Games</option>
+                        <option value="valorant">Valorant</option>
+                        <option value="cs2">Counter-Strike 2</option>
+                        <option value="fortnite">Fortnite</option>
+                        <option value="bgmi">BGMI</option>
+                        <option value="rocket-league">Rocket League</option>
+                        <option value="apex-legends">Apex Legends</option>
+                        <option value="free-fire">Free Fire</option>
+                        <option value="cod">Call of Duty</option>
+                    </select>
+                </div>
+                <div class="search-group">
+                    <select class="search-input" id="viewerFilter">
+                        <option value="">All Viewers</option>
+                        <option value="high">High Viewers (1000+)</option>
+                        <option value="medium">Medium Viewers (100-1000)</option>
+                        <option value="low">Low Viewers (<100)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="nav-icons">
+                <div class="nav-icon" title="Chat">
+                    <svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 11-3.3-6.5"/><path d="M21 12v7l-4-2"/></svg>
+                </div>
+                <div class="nav-icon" title="Notifications">
+                    <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 10-12 0c0 7-3 7-3 7h18s-3 0-3-7"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+                </div>
+                <div class="nav-icon" title="Profile">
+                    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="3"/></svg>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <h2>GRINDZONE</h2>
+            </div>
+
+            <div class="greeting">
+                <div class="greeting-text" id="greetingText">Good evening,</div>
+                <div class="username">GamerPro2024</div>
+            </div>
+
+            <ul class="sidebar-menu">
+                <li class="menu-item">
+                    <a href="grindzone.html" class="menu-link">
+                        <span class="menu-icon">
+                            <svg viewBox="0 0 24 24"><path d="M3 10.5l9-7 9 7"/><path d="M5 10v9a1 1 0 001 1h4v-6h4v6h4a1 1 0 001-1v-9"/></svg>
+                        </span>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="tournaments.html" class="menu-link">
+                        <span class="menu-icon">
+                            <svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="3"/><path d="M6 21l6-4 6 4"/><path d="M6 15l6-4 6 4"/></svg>
+                        </span>
+                        <span>Tournaments</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="stream.html" class="menu-link active">
+                        <span class="menu-icon">
+                            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8"/></svg>
+                        </span>
+                        <span>Stream</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="leaderboard.html" class="menu-link">
+                        <span class="menu-icon">
+                            <svg viewBox="0 0 24 24"><path d="M3 12h18"/><path d="M7 12a5 5 0 1010 0 5 5 0 10-10 0z"/></svg>
+                        </span>
+                        <span>Leaderboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="achievements.html" class="menu-link">
+                        <span class="menu-icon">
+                            <svg viewBox="0 0 24 24"><path d="M12 3l2.5 5 5.5.8-4 3.9.9 5.6-4.9-2.6-4.9 2.6.9-5.6-4-3.9 5.5-.8z"/></svg>
+                        </span>
+                        <span>Achievements</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="stats.html" class="menu-link">
+                        <span class="menu-icon">
+                            <svg viewBox="0 0 24 24"><path d="M3 3h18v6H3z"/><path d="M3 15h18v6H3z"/><path d="M3 9h18"/></svg>
+                        </span>
+                        <span>Stats</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-bottom">
+                <div class="menu-item">
+                    <a href="profile.html" class="menu-link">
+                        <span class="menu-icon">
+                            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="3"/></svg>
+                        </span>
+                        <span>Profile</span>
+                    </a>
+                </div>
+                <div class="menu-item">
+                    <a href="login.html" class="menu-link">
+                        <span class="menu-icon">
+                            <svg viewBox="0 0 24 24"><path d="M10 3h7a2 2 0 012 2v14a2 2 0 01-2 2h-7"/><path d="M15 12H3"/><path d="M7 8l-4 4 4 4"/></svg>
+                        </span>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Stream Layout -->
+            <div class="stream-layout">
+                <!-- Video Player Section -->
+                <div class="video-section">
+                    <div class="video-player">
+                        <div class="video-placeholder">
+                            <button class="play-button" onclick="togglePlay()">▶</button>
+                            <h3>Winter Championship Finals</h3>
+                            <p>Valorant Pro League - Live Now</p>
+                        </div>
+                    </div>
+                    <div class="video-controls">
+                        <button class="control-btn">⏸</button>
+                        <button class="control-btn">⏹</button>
+                        <input type="range" class="volume-slider" min="0" max="100" value="75">
+                        <button class="control-btn">🔊</button>
+                        <button class="control-btn">⛶</button>
+                    </div>
+                </div>
+
+                <!-- Chat Section -->
+                <div class="chat-section">
+                    <div class="chat-header">
+                        <div class="chat-title">Live Chat</div>
+                        <div class="chat-controls">
+                            <button class="chat-control-btn">⚙️</button>
+                            <button class="chat-control-btn">👥</button>
+                        </div>
+                    </div>
+                    <div class="chat-messages" id="chatMessages">
+                        <!-- Chat messages will be generated by JavaScript -->
+                    </div>
+                    <div class="chat-input-section">
+                        <div class="chat-input-container">
+                            <input type="text" class="chat-input" placeholder="Type a message..." id="chatInput">
+                            <button class="send-btn" onclick="sendMessage()">📤</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stream Info -->
+            <div class="stream-info">
+                <h2 class="stream-title">Winter Championship Finals - Valorant Pro League</h2>
+                <div class="stream-meta">
+                    <div class="viewer-count">
+                        <span>👁</span>
+                        <span id="viewerCount">2,847</span> viewers
+                    </div>
+                    <div class="game-tag">Valorant</div>
+                </div>
+                <div class="streamer-info">
+                    <div class="streamer-avatar">GZ</div>
+                    <div class="streamer-details">
+                        <h4>GRINDZONE Official</h4>
+                        <p>Official GRINDZONE tournament stream</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Other Live Streams -->
+            <div class="live-streams">
+                <div class="streams-header">
+                    <h3 class="streams-title">Other Live Streams</h3>
+                </div>
+                <div class="streams-grid" id="streamsGrid">
+                    <!-- Stream cards will be generated by JavaScript -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Chat messages data
+        const chatMessages = [
+            { username: "ProGamer2024", message: "This is insane! 🔥", time: "2:30 PM" },
+            { username: "ValorantFan", message: "That clutch was amazing!", time: "2:31 PM" },
+            { username: "EsportsLover", message: "Team Alpha is dominating!", time: "2:31 PM" },
+            { username: "GamerGirl", message: "Can't wait for the next round!", time: "2:32 PM" },
+            { username: "TournamentViewer", message: "The prize pool is huge! 💰", time: "2:32 PM" },
+            { username: "StreamWatcher", message: "Great commentary!", time: "2:33 PM" },
+            { username: "ValorantPro", message: "That aim is incredible!", time: "2:33 PM" },
+            { username: "EsportsFan", message: "This is the best tournament ever!", time: "2:34 PM" }
+        ];
+
+        // Live streams data
+        const liveStreams = [
+            { title: "CS2 Pro League", streamer: "CS2Master", viewers: 1250, game: "Counter-Strike 2" },
+            { title: "Fortnite Build Battle", streamer: "BuildKing", viewers: 890, game: "Fortnite" },
+            { title: "BGMI Championship", streamer: "MobileGamer", viewers: 2100, game: "BGMI" },
+            { title: "Rocket League Finals", streamer: "RocketPro", viewers: 650, game: "Rocket League" },
+            { title: "Apex Legends Showdown", streamer: "ApexMaster", viewers: 1100, game: "Apex Legends" },
+            { title: "Free Fire Tournament", streamer: "FreeFireKing", viewers: 1800, game: "Free Fire" }
+        ];
+
+        // Generate chat messages
+        function generateChatMessages() {
+            const chatContainer = document.getElementById('chatMessages');
+            chatContainer.innerHTML = '';
+
+            chatMessages.forEach(msg => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'chat-message';
+                messageDiv.innerHTML = `
+                    <div class="message-avatar">${msg.username.charAt(0)}</div>
+                    <div class="message-content">
+                        <div class="message-header">
+                            <span class="message-username">${msg.username}</span>
+                            <span class="message-time">${msg.time}</span>
+                        </div>
+                        <div class="message-text">${msg.message}</div>
+                    </div>
+                `;
+                chatContainer.appendChild(messageDiv);
+            });
+
+            // Auto-scroll to bottom
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // Generate live streams
+        function generateLiveStreams() {
+            const streamsContainer = document.getElementById('streamsGrid');
+            streamsContainer.innerHTML = '';
+
+            liveStreams.forEach(stream => {
+                const streamCard = document.createElement('div');
+                streamCard.className = 'stream-card';
+                streamCard.innerHTML = `
+                    <div class="stream-thumbnail"></div>
+                    <div class="stream-card-info">
+                        <div class="stream-card-title">${stream.title}</div>
+                        <div class="stream-card-meta">
+                            <span>${stream.streamer}</span>
+                            <span>👁 ${stream.viewers.toLocaleString()}</span>
+                        </div>
+                    </div>
+                `;
+                streamsContainer.appendChild(streamCard);
+            });
+        }
+
+        // Send message function
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (message) {
+                const now = new Date();
+                const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                const newMessage = {
+                    username: "You",
+                    message: message,
+                    time: time
+                };
+                
+                chatMessages.push(newMessage);
+                generateChatMessages();
+                input.value = '';
+            }
+        }
+
+        // Toggle play/pause
+        function togglePlay() {
+            const playButton = document.querySelector('.play-button');
+            if (playButton.textContent === '▶') {
+                playButton.textContent = '⏸';
+                playButton.style.background = 'linear-gradient(135deg, #EF4444, #DC2626)';
+            } else {
+                playButton.textContent = '▶';
+                playButton.style.background = 'linear-gradient(135deg, #6B46C1, #EC4899)';
+            }
+        }
+
+        // Simulate new chat messages
+        function addRandomMessage() {
+            const randomMessages = [
+                "Amazing play! 🔥",
+                "This is so intense!",
+                "Go team! 💪",
+                "Incredible aim!",
+                "What a clutch!",
+                "This tournament is epic!",
+                "Great commentary!",
+                "Can't look away! 👀"
+            ];
+            
+            const randomUsernames = [
+                "GamerPro", "EsportsFan", "TournamentViewer", "ValorantLover",
+                "StreamWatcher", "ProGamer", "GameMaster", "EsportsKing"
+            ];
+            
+            const randomMessage = randomMessages[Math.floor(Math.random() * randomMessages.length)];
+            const randomUsername = randomUsernames[Math.floor(Math.random() * randomUsernames.length)];
+            const now = new Date();
+            const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            const newMessage = {
+                username: randomUsername,
+                message: randomMessage,
+                time: time
+            };
+            
+            chatMessages.push(newMessage);
+            generateChatMessages();
+        }
+
+        // Update viewer count
+        function updateViewerCount() {
+            const viewerElement = document.getElementById('viewerCount');
+            const currentCount = parseInt(viewerElement.textContent.replace(/,/g, ''));
+            const change = Math.floor(Math.random() * 20) - 10; // Random change between -10 and +10
+            const newCount = Math.max(1000, currentCount + change);
+            viewerElement.textContent = newCount.toLocaleString();
+        }
+
+        // Dynamic greeting
+        function updateGreeting() {
+            const now = new Date();
+            const hour = now.getHours();
+            const greetingElement = document.getElementById('greetingText');
+            
+            if (hour < 12) {
+                greetingElement.textContent = 'Good morning,';
+            } else if (hour < 17) {
+                greetingElement.textContent = 'Good afternoon,';
+            } else {
+                greetingElement.textContent = 'Good evening,';
+            }
+        }
+
+        // Chat input enter key
+        document.getElementById('chatInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Initialize
+        updateGreeting();
+        generateChatMessages();
+        generateLiveStreams();
+
+        // Set up intervals
+        setInterval(addRandomMessage, 8000); // Add message every 8 seconds
+        setInterval(updateViewerCount, 5000); // Update viewer count every 5 seconds
+
+        console.log('🎮 Stream page loaded successfully!');
+    </script>
+</body>
+</html>

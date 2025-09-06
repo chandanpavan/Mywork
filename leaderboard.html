@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard - GRINDZONE</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0F0F0F 0%, #1A1A1A 100%);
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(90deg, #6B46C1 0%, #EC4899 100%);
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 20px rgba(107, 70, 193, 0.3);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #F472B6, #A855F7);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(244, 114, 182, 0.5);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(45, 45, 45, 0.9);
+            padding: 0.75rem 1.25rem;
+            border-bottom: 1px solid rgba(107, 70, 193, 0.25);
+            backdrop-filter: blur(6px);
+        }
+
+        .nav-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .nav-center {
+            display: flex;
+            gap: 0.75rem;
+            flex: 1;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-group {
+            position: relative;
+        }
+
+        .search-input {
+            background: rgba(55, 65, 81, 0.8);
+            border: 2px solid rgba(107, 70, 193, 0.3);
+            border-radius: 25px;
+            padding: 0.6rem 0.9rem;
+            color: white;
+            width: 200px;
+            min-height: 40px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #EC4899;
+            box-shadow: 0 0 15px rgba(236, 72, 153, 0.3);
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .nav-icons {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .nav-icon {
+            width: 38px;
+            height: 38px;
+            background: #000000;
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .nav-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke: #ffffff;
+            stroke-width: 1.8;
+            fill: none;
+        }
+
+        /* Main Layout */
+        .main-layout {
+            display: flex;
+            min-height: calc(100vh - 140px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: rgba(30, 30, 30, 0.96);
+            padding: 1.5rem 1rem;
+            border-right: 1px solid rgba(107, 70, 193, 0.25);
+            backdrop-filter: blur(4px);
+        }
+
+        .sidebar-logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-logo h2 {
+            background: linear-gradient(45deg, #6B46C1, #EC4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.5rem;
+        }
+
+        .greeting {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: linear-gradient(135deg, rgba(107, 70, 193, 0.1), rgba(236, 72, 153, 0.1));
+            border-radius: 10px;
+            border: 1px solid rgba(168, 85, 247, 0.2);
+        }
+
+        .greeting-text {
+            font-size: 0.9rem;
+            color: #A855F7;
+            margin-bottom: 0.5rem;
+        }
+
+        .username {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .menu-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            padding: 0.8rem 0.9rem;
+            color: #e5e7eb;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.25s ease;
+            position: relative;
+        }
+
+        .menu-link:hover, .menu-link.active {
+            background: linear-gradient(135deg, rgba(107, 70, 193, 0.18), rgba(236, 72, 153, 0.18));
+            transform: translateX(4px);
+        }
+
+        .menu-link.active::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 10px;
+            bottom: 10px;
+            width: 3px;
+            background: linear-gradient(180deg, #6B46C1, #EC4899);
+            border-radius: 3px;
+        }
+
+        .menu-icon {
+            width: 34px;
+            height: 34px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background: #000000;
+        }
+
+        .menu-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke: #ffffff;
+            stroke-width: 1.8;
+            fill: none;
+        }
+
+        .menu-link:hover .menu-icon {
+            background: #111111;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            border-top: 1px solid rgba(107, 70, 193, 0.3);
+            padding-top: 1rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, #6B46C1, #EC4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.1rem;
+        }
+
+        /* Filters */
+        .filters-section {
+            background: rgba(45, 45, 45, 0.8);
+            border: 1px solid rgba(107, 70, 193, 0.3);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-label {
+            color: #A855F7;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .filter-select {
+            background: rgba(55, 65, 81, 0.8);
+            border: 2px solid rgba(107, 70, 193, 0.3);
+            border-radius: 10px;
+            padding: 0.75rem;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #EC4899;
+            box-shadow: 0 0 15px rgba(236, 72, 153, 0.3);
+        }
+
+        /* Leaderboard Tabs */
+        .leaderboard-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            background: rgba(45, 45, 45, 0.8);
+            border: 1px solid rgba(107, 70, 193, 0.3);
+            border-radius: 15px;
+            padding: 0.5rem;
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #6B46C1, #EC4899);
+            color: white;
+            box-shadow: 0 4px 15px rgba(107, 70, 193, 0.3);
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: rgba(107, 70, 193, 0.2);
+            color: white;
+        }
+
+        /* Leaderboard Table */
+        .leaderboard-container {
+            background: rgba(45, 45, 45, 0.8);
+            border: 1px solid rgba(107, 70, 193, 0.3);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .leaderboard-header {
+            background: linear-gradient(135deg, rgba(107, 70, 193, 0.3), rgba(236, 72, 153, 0.3));
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .leaderboard-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #A855F7;
+        }
+
+        .leaderboard-stats {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #EC4899;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .leaderboard-table th {
+            background: rgba(30, 30, 30, 0.9);
+            padding: 1rem;
+            text-align: left;
+            font-weight: bold;
+            color: #A855F7;
+            border-bottom: 2px solid rgba(107, 70, 193, 0.3);
+        }
+
+        .leaderboard-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(107, 70, 193, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .leaderboard-table tr:hover {
+            background: rgba(107, 70, 193, 0.1);
+        }
+
+        .rank-cell {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .rank-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .rank-1 {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #000;
+        }
+
+        .rank-2 {
+            background: linear-gradient(135deg, #C0C0C0, #A0A0A0);
+            color: #000;
+        }
+
+        .rank-3 {
+            background: linear-gradient(135deg, #CD7F32, #B8860B);
+            color: #000;
+        }
+
+        .rank-other {
+            background: rgba(107, 70, 193, 0.3);
+            color: white;
+        }
+
+        .player-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .player-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6B46C1, #EC4899);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .player-details h4 {
+            margin-bottom: 0.25rem;
+            color: #A855F7;
+        }
+
+        .player-details p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .score-cell {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #EC4899;
+        }
+
+        .change-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .change-up {
+            color: #10B981;
+        }
+
+        .change-down {
+            color: #EF4444;
+        }
+
+        .change-neutral {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Podium */
+        .podium-section {
+            margin-bottom: 3rem;
+        }
+
+        .podium-title {
+            font-size: 1.8rem;
+            background: linear-gradient(45deg, #6B46C1, #EC4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .podium {
+            display: flex;
+            justify-content: center;
+            align-items: end;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .podium-player {
+            text-align: center;
+            position: relative;
+        }
+
+        .podium-stand {
+            width: 120px;
+            background: linear-gradient(135deg, #6B46C1, #EC4899);
+            border-radius: 10px 10px 0 0;
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .podium-stand.first {
+            height: 120px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+        }
+
+        .podium-stand.second {
+            height: 100px;
+            background: linear-gradient(135deg, #C0C0C0, #A0A0A0);
+        }
+
+        .podium-stand.third {
+            height: 80px;
+            background: linear-gradient(135deg, #CD7F32, #B8860B);
+        }
+
+        .podium-avatar {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6B46C1, #EC4899);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.5rem;
+            border: 4px solid white;
+        }
+
+        .podium-name {
+            font-weight: bold;
+            color: #A855F7;
+            margin-bottom: 0.25rem;
+        }
+
+        .podium-score {
+            color: #EC4899;
+            font-weight: bold;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-layout {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                position: fixed;
+                top: 0;
+                left: -100%;
+                height: 100vh;
+                z-index: 1000;
+                transition: left 0.3s ease;
+            }
+
+            .sidebar.open {
+                left: 0;
+            }
+
+            .leaderboard-tabs {
+                flex-direction: column;
+            }
+
+            .podium {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .podium-stand {
+                width: 200px;
+            }
+
+            .leaderboard-table {
+                font-size: 0.9rem;
+            }
+
+            .leaderboard-table th,
+            .leaderboard-table td {
+                padding: 0.75rem 0.5rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .leaderboard-table tr {
+            animation: slideIn 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">GRINDZONE</div>
+            <div class="header-right">
+                <span>Competitive Rankings</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <div></div>
+            <div class="nav-center">
+                <div class="search-group">
+                    <input type="text" class="search-input" placeholder="Search players..." id="playerSearch">
+                </div>
+                <div class="search-group">
+                    <select class="search-input" id="gameFilter">
+                        <option value="">All Games</option>
+                        <option value="valorant">Valorant</option>
+                        <option value="cs2">Counter-Strike 2</option>
+                        <option value="fortnite">Fortnite</option>
+                        <option value="bgmi">BGMI</option>
+                        <option value="rocket-league">Rocket League</option>
+                        <option value="apex-legends">Apex Legends</option>
+                        <option value="free-fire">Free Fire</option>
+                        <option value="cod">Call of Duty</option>
+                    </select>
+                </div>
+                <div class="search-group">
+                    <select class="search-input" id="regionFilter">
+                        <option value="">All Regions</option>
+                        <option value="na">North America</option>
+                        <option value="eu">Europe</option>
+                        <option value="asia">Asia</option>
+                        <option value="india">India</option>
+                        <option value="sa">South America</option>
+                    </select>
+                </div>
+            </div>
+            <div class="nav-icons">
+                <div class="nav-icon" title="Chat">
+                    <svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 11-3.3-6.5"/><path d="M21 12v7l-4-2"/></svg>
+                </div>
+                <div class="nav-icon" title="Notifications">
+                    <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 10-12 0c0 7-3 7-3 7h18s-3 0-3-7"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+                </div>
+                <div class="nav-icon" title="Profile">
+                    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="3"/></svg>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <h2>GRINDZONE</h2>
+            </div>
+
+            <div class="greeting">
+                <div class="greeting-text" id="greetingText">Good evening,</div>
+                <div class="username">GamerPro2024</div>
+            </div>
+
+            <ul class="sidebar-menu">
+                <li class="menu-item">
+                    <a href="grindzone.html" class="menu-link">
+                        <span class="menu-icon">
+                            <svg viewBox="0 0 24 24"><path d="M3 10.5l9-7 9 7"/><path d="M5 10v9a1 1 0 001 1h4v-6h4v6h4a1 1 0 001-1v-9"/></svg>
+                        </span>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="tournaments.html" class="menu-link">
+                        <span class="menu-icon">
+                            <svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="3"/><path d="M6 21l6-4 6 4"/><path d="M6 15l6-4 6 4"/></svg>
+                        </span>
+                        <span>Tournaments</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="stream.html" class="menu-link">
+                        <span class="menu-icon">
+                            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8"/></svg>
+                        </span>
+                        <span>Stream</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="leaderboard.html" class="menu-link active">
+                        <span class="menu-icon">
+                            <svg viewBox="0 0 24 24"><path d="M3 12h18"/><path d="M7 12a5 5 0 1010 0 5 5 0 10-10 0z"/></svg>
+                        </span>
+                        <span>Leaderboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="achievements.html" class="menu-link">
+                        <span class="menu-icon">
+                            <svg viewBox="0 0 24 24"><path d="M12 3l2.5 5 5.5.8-4 3.9.9 5.6-4.9-2.6-4.9 2.6.9-5.6-4-3.9 5.5-.8z"/></svg>
+                        </span>
+                        <span>Achievements</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="stats.html" class="menu-link">
+                        <span class="menu-icon">
+                            <svg viewBox="0 0 24 24"><path d="M3 3h18v6H3z"/><path d="M3 15h18v6H3z"/><path d="M3 9h18"/></svg>
+                        </span>
+                        <span>Stats</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-bottom">
+                <div class="menu-item">
+                    <a href="profile.html" class="menu-link">
+                        <span class="menu-icon">
+                            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="3"/></svg>
+                        </span>
+                        <span>Profile</span>
+                    </a>
+                </div>
+                <div class="menu-item">
+                    <a href="login.html" class="menu-link">
+                        <span class="menu-icon">
+                            <svg viewBox="0 0 24 24"><path d="M10 3h7a2 2 0 012 2v14a2 2 0 01-2 2h-7"/><path d="M15 12H3"/><path d="M7 8l-4 4 4 4"/></svg>
+                        </span>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">Leaderboard</h1>
+                <p class="page-subtitle">See where you stand among the best players</p>
+            </div>
+
+            <!-- Filters -->
+            <div class="filters-section">
+                <div class="filters-grid">
+                    <div class="filter-group">
+                        <label class="filter-label">Game</label>
+                        <select class="filter-select" id="gameFilterMain">
+                            <option value="">All Games</option>
+                            <option value="valorant">Valorant</option>
+                            <option value="cs2">Counter-Strike 2</option>
+                            <option value="fortnite">Fortnite</option>
+                            <option value="bgmi">BGMI</option>
+                            <option value="rocket-league">Rocket League</option>
+                            <option value="apex-legends">Apex Legends</option>
+                            <option value="free-fire">Free Fire</option>
+                            <option value="cod">Call of Duty</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Time Period</label>
+                        <select class="filter-select" id="timeFilter">
+                            <option value="all-time">All Time</option>
+                            <option value="monthly">This Month</option>
+                            <option value="weekly">This Week</option>
+                            <option value="daily">Today</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Region</label>
+                        <select class="filter-select" id="regionFilterMain">
+                            <option value="">All Regions</option>
+                            <option value="na">North America</option>
+                            <option value="eu">Europe</option>
+                            <option value="asia">Asia</option>
+                            <option value="india">India</option>
+                            <option value="sa">South America</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Sort By</label>
+                        <select class="filter-select" id="sortFilter">
+                            <option value="score">Total Score</option>
+                            <option value="wins">Wins</option>
+                            <option value="winrate">Win Rate</option>
+                            <option value="kills">Kills</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leaderboard Tabs -->
+            <div class="leaderboard-tabs">
+                <button class="tab-btn active" onclick="switchTab('overall')">Overall</button>
+                <button class="tab-btn" onclick="switchTab('valorant')">Valorant</button>
+                <button class="tab-btn" onclick="switchTab('cs2')">CS2</button>
+                <button class="tab-btn" onclick="switchTab('bgmi')">BGMI</button>
+            </div>
+
+            <!-- Podium -->
+            <div class="podium-section">
+                <h3 class="podium-title">Top 3 Players</h3>
+                <div class="podium" id="podium">
+                    <!-- Podium will be generated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Leaderboard Table -->
+            <div class="leaderboard-container">
+                <div class="leaderboard-header">
+                    <div class="leaderboard-title">Global Rankings</div>
+                    <div class="leaderboard-stats">
+                        <div class="stat-item">
+                            <div class="stat-value" id="totalPlayers">1,247</div>
+                            <div class="stat-label">Total Players</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="activePlayers">892</div>
+                            <div class="stat-label">Active This Week</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="avgScore">2,847</div>
+                            <div class="stat-label">Average Score</div>
+                        </div>
+                    </div>
+                </div>
+                <table class="leaderboard-table" id="leaderboardTable">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Player</th>
+                            <th>Score</th>
+                            <th>Wins</th>
+                            <th>Win Rate</th>
+                            <th>Change</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboardBody">
+                        <!-- Leaderboard rows will be generated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- Include API and JavaScript files -->
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+        // Game filter buttons functionality
+        function switchTab(game) {
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+            
+            // Update leaderboard data
+            loadLeaderboardForGame(game);
+        }
+
+        function loadLeaderboardForGame(game) {
+            // This will be handled by the leaderboard.js file
+            if (window.loadLeaderboard) {
+                window.currentGame = game;
+                window.loadLeaderboard();
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            updateNavigation();
+        });
+    </script>
+    <script src="/js/leaderboard.js"></script>
+</body>
+</html>

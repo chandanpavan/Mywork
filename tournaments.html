@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tournaments - GRINDZONE</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0F0F0F 0%, #1A1A1A 100%);
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(90deg, #6B46C1 0%, #EC4899 100%);
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 20px rgba(107, 70, 193, 0.3);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #F472B6, #A855F7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(244, 114, 182, 0.5);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(45, 45, 45, 0.9);
+            padding: 0.75rem 1.25rem;
+            border-bottom: 1px solid rgba(107, 70, 193, 0.25);
+            backdrop-filter: blur(6px);
+        }
+
+        .nav-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .nav-center {
+            display: flex;
+            gap: 0.75rem;
+            flex: 1;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-group {
+            position: relative;
+        }
+
+        .search-input {
+            background: rgba(55, 65, 81, 0.8);
+            border: 2px solid rgba(107, 70, 193, 0.3);
+            border-radius: 25px;
+            padding: 0.6rem 0.9rem;
+            color: white;
+            width: 200px;
+            min-height: 40px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #EC4899;
+            box-shadow: 0 0 15px rgba(236, 72, 153, 0.3);
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .nav-icons {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .nav-icon {
+            width: 38px;
+            height: 38px;
+            background: #000000;
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .nav-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke: #ffffff;
+            stroke-width: 1.8;
+            fill: none;
+        }
+
+        /* Main Layout */
+        .main-layout {
+            display: flex;
+            min-height: calc(100vh - 140px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: rgba(30, 30, 30, 0.96);
+            padding: 1.5rem 1rem;
+            border-right: 1px solid rgba(107, 70, 193, 0.25);
+            backdrop-filter: blur(4px);
+        }
+
+        .sidebar-logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-logo h2 {
+            background: linear-gradient(45deg, #6B46C1, #EC4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.5rem;
+        }
+
+        .greeting {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: linear-gradient(135deg, rgba(107, 70, 193, 0.1), rgba(236, 72, 153, 0.1));
+            border-radius: 10px;
+            border: 1px solid rgba(168, 85, 247, 0.2);
+        }
+
+        .greeting-text {
+            font-size: 0.9rem;
+            color: #A855F7;
+            margin-bottom: 0.5rem;
+        }
+
+        .username {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .menu-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            padding: 0.8rem 0.9rem;
+            color: #e5e7eb;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.25s ease;
+            position: relative;
+        }
+
+        .menu-link:hover, .menu-link.active {
+            background: linear-gradient(135deg, rgba(107, 70, 193, 0.18), rgba(236, 72, 153, 0.18));
+            transform: translateX(4px);
+        }
+
+        .menu-link.active::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 10px;
+            bottom: 10px;
+            width: 3px;
+            background: linear-gradient(180deg, #6B46C1, #EC4899);
+            border-radius: 3px;
+        }
+
+        .menu-icon {
+            width: 34px;
+            height: 34px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background: #000000;
+        }
+
+        .menu-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke: #ffffff;
+            stroke-width: 1.8;
+            fill: none;
+        }
+
+        .menu-link:hover .menu-icon {
+            background: #111111;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            border-top: 1px solid rgba(107, 70, 193, 0.3);
+            padding-top: 1rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, #6B46C1, #EC4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.1rem;
+        }
+
+        /* Filters */
+        .filters-section {
+            background: rgba(45, 45, 45, 0.8);
+            border: 1px solid rgba(107, 70, 193, 0.3);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-label {
+            color: #A855F7;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .filter-select {
+            background: rgba(55, 65, 81, 0.8);
+            border: 2px solid rgba(107, 70, 193, 0.3);
+            border-radius: 10px;
+            padding: 0.75rem;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #EC4899;
+            box-shadow: 0 0 15px rgba(236, 72, 153, 0.3);
+        }
+
+        /* Tournament Grid */
+        .tournaments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .tournament-card {
+            background: linear-gradient(135deg, rgba(45, 45, 45, 0.9), rgba(55, 65, 81, 0.9));
+            border: 2px solid rgba(107, 70, 193, 0.3);
+            border-radius: 15px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tournament-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(107, 70, 193, 0.4);
+            border-color: #EC4899;
+        }
+
+        .tournament-header {
+            margin-bottom: 1rem;
+        }
+
+        .tournament-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        .prize-pool {
+            color: #F59E0B;
+            font-weight: bold;
+            font-size: 1.1rem;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(236, 72, 153, 0.12));
+            border: 1px solid rgba(245, 158, 11, 0.35);
+            padding: 0.25rem 0.6rem;
+            border-radius: 8px;
+            display: inline-block;
+            backdrop-filter: blur(2px);
+        }
+
+        .tournament-middle {
+            margin-bottom: 1.5rem;
+        }
+
+        .countdown {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #EC4899;
+            text-align: center;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 10px rgba(236,72,153,0.6);
+        }
+
+        .game-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .game-name {
+            font-weight: bold;
+            color: #A855F7;
+        }
+
+        .tournament-type {
+            background: rgba(107, 70, 193, 0.3);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            border: 1px solid rgba(168, 85, 247, 0.4);
+        }
+
+        .tournament-bottom {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .register-btn {
+            background: linear-gradient(135deg, #6B46C1, #EC4899);
+            border: none;
+            padding: 1rem;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .register-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(107, 70, 193, 0.3);
+        }
+
+        .register-btn.registered {
+            background: linear-gradient(135deg, #10B981, #059669);
+        }
+
+        .team-slots {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .slots-text {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .progress-bar {
+            width: 100px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #6B46C1, #EC4899);
+            transition: width 0.5s ease;
+        }
+
+        .tournament-status {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-live {
+            background: rgba(239, 68, 68, 0.2);
+            color: #EF4444;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+        }
+
+        .status-upcoming {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3B82F6;
+            border: 1px solid rgba(59, 130, 246, 0.4);
+        }
+
+        .status-registration {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10B981;
+            border: 1px solid rgba(16, 185, 129, 0.4);
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+
+        .pagination-btn {
+            background: rgba(55, 65, 81, 0.8);
+            border: 2px solid rgba(107, 70, 193, 0.3);
+            border-radius: 10px;
+            padding: 0.75rem 1.5rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .pagination-btn:hover {
+            border-color: #EC4899;
+            box-shadow: 0 0 15px rgba(236, 72, 153, 0.3);
+        }
+
+        .pagination-btn.active {
+            background: linear-gradient(135deg, #6B46C1, #EC4899);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-layout {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                position: fixed;
+                top: 0;
+                left: -100%;
+                height: 100vh;
+                z-index: 1000;
+                transition: left 0.3s ease;
+            }
+
+            .sidebar.open {
+                left: 0;
+            }
+
+            .tournaments-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .countdown {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">GRINDZONE</div>
+            <div class="header-right">
+                <span>Tournament Central</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <div></div>
+            <div class="nav-center">
+                <div class="search-group">
+                    <input type="text" class="search-input" placeholder="Search tournaments..." id="tournamentSearch">
+                </div>
+                <div class="search-group">
+                    <select class="search-input" id="gameFilter">
+                        <option value="">All Games</option>
+                        <option value="valorant">Valorant</option>
+                        <option value="cs2">Counter-Strike 2</option>
+                        <option value="fortnite">Fortnite</option>
+                        <option value="bgmi">BGMI</option>
+                        <option value="rocket-league">Rocket League</option>
+                        <option value="apex-legends">Apex Legends</option>
+                        <option value="free-fire">Free Fire</option>
+                        <option value="cod">Call of Duty</option>
+                    </select>
+                </div>
+                <div class="search-group">
+                    <select class="search-input" id="statusFilter">
+                        <option value="">All Status</option>
+                        <option value="live">Live</option>
+                        <option value="upcoming">Upcoming</option>
+                        <option value="registration">Registration Open</option>
+                    </select>
+                </div>
+            </div>
+            <div class="nav-icons">
+                <div class="nav-icon" title="Chat">
+                    <svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 11-3.3-6.5"/><path d="M21 12v7l-4-2"/></svg>
+                </div>
+                <div class="nav-icon" title="Notifications">
+                    <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 10-12 0c0 7-3 7-3 7h18s-3 0-3-7"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+                </div>
+                <div class="nav-icon" title="Profile">
+                    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="3"/></svg>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <h2>GRINDZONE</h2>
+            </div>
+
+            <div class="greeting">
+                <div class="greeting-text" id="greetingText">Good evening,</div>
+                <div class="username">GamerPro2024</div>
+            </div>
+
+            <ul class="sidebar-menu">
+                <li class="menu-item">
+                    <a href="grindzone.html" class="menu-link">
+                        <span class="menu-icon">
+                            <svg viewBox="0 0 24 24"><path d="M3 10.5l9-7 9 7"/><path d="M5 10v9a1 1 0 001 1h4v-6h4v6h4a1 1 0 001-1v-9"/></svg>
+                        </span>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="tournaments.html" class="menu-link active">
+                        <span class="menu-icon">
+                            <svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="3"/><path d="M6 21l6-4 6 4"/><path d="M6 15l6-4 6 4"/></svg>
+                        </span>
+                        <span>Tournaments</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="stream.html" class="menu-link">
+                        <span class="menu-icon">
+                            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8"/></svg>
+                        </span>
+                        <span>Stream</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="leaderboard.html" class="menu-link">
+                        <span class="menu-icon">
+                            <svg viewBox="0 0 24 24"><path d="M3 12h18"/><path d="M7 12a5 5 0 1010 0 5 5 0 10-10 0z"/></svg>
+                        </span>
+                        <span>Leaderboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="achievements.html" class="menu-link">
+                        <span class="menu-icon">
+                            <svg viewBox="0 0 24 24"><path d="M12 3l2.5 5 5.5.8-4 3.9.9 5.6-4.9-2.6-4.9 2.6.9-5.6-4-3.9 5.5-.8z"/></svg>
+                        </span>
+                        <span>Achievements</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="stats.html" class="menu-link">
+                        <span class="menu-icon">
+                            <svg viewBox="0 0 24 24"><path d="M3 3h18v6H3z"/><path d="M3 15h18v6H3z"/><path d="M3 9h18"/></svg>
+                        </span>
+                        <span>Stats</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-bottom">
+                <div class="menu-item">
+                    <a href="profile.html" class="menu-link">
+                        <span class="menu-icon">
+                            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="3"/></svg>
+                        </span>
+                        <span>Profile</span>
+                    </a>
+                </div>
+                <div class="menu-item">
+                    <a href="login.html" class="menu-link">
+                        <span class="menu-icon">
+                            <svg viewBox="0 0 24 24"><path d="M10 3h7a2 2 0 012 2v14a2 2 0 01-2 2h-7"/><path d="M15 12H3"/><path d="M7 8l-4 4 4 4"/></svg>
+                        </span>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">Tournaments</h1>
+                <p class="page-subtitle">Join the biggest esports tournaments and compete for amazing prizes</p>
+            </div>
+
+            <!-- Filters -->
+            <div class="filters-section">
+                <div class="filters-grid">
+                    <div class="filter-group">
+                        <label class="filter-label">Game</label>
+                        <select class="filter-select" id="gameFilterMain">
+                            <option value="">All Games</option>
+                            <option value="valorant">Valorant</option>
+                            <option value="cs2">Counter-Strike 2</option>
+                            <option value="fortnite">Fortnite</option>
+                            <option value="bgmi">BGMI</option>
+                            <option value="rocket-league">Rocket League</option>
+                            <option value="apex-legends">Apex Legends</option>
+                            <option value="free-fire">Free Fire</option>
+                            <option value="cod">Call of Duty</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Format</label>
+                        <select class="filter-select" id="formatFilterMain">
+                            <option value="">All Formats</option>
+                            <option value="solo">Solo</option>
+                            <option value="duo">Duo</option>
+                            <option value="squad">Squad</option>
+                            <option value="team">Team vs Team</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Prize Pool</label>
+                        <select class="filter-select" id="prizeFilter">
+                            <option value="">All Prize Pools</option>
+                            <option value="0-25000">₹0 - ₹25,000</option>
+                            <option value="25000-50000">₹25,000 - ₹50,000</option>
+                            <option value="50000-100000">₹50,000 - ₹1,00,000</option>
+                            <option value="100000+">₹1,00,000+</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Status</label>
+                        <select class="filter-select" id="statusFilterMain">
+                            <option value="">All Status</option>
+                            <option value="live">Live</option>
+                            <option value="upcoming">Upcoming</option>
+                            <option value="registration">Registration Open</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tournaments Grid -->
+            <div class="tournaments-grid" id="tournamentsGrid">
+                <!-- Tournament cards will be generated by JavaScript -->
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination">
+                <button class="pagination-btn" id="prevPage">← Previous</button>
+                <button class="pagination-btn active">1</button>
+                <button class="pagination-btn">2</button>
+                <button class="pagination-btn">3</button>
+                <button class="pagination-btn" id="nextPage">Next →</button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Tournament data
+        const tournaments = [
+            {
+                id: 1,
+                name: "Winter Championship",
+                game: "Valorant",
+                format: "Squad",
+                prizePool: "₹50,000",
+                status: "registration",
+                countdown: "02:15:30",
+                slots: { current: 32, total: 48 },
+                registered: false
+            },
+            {
+                id: 2,
+                name: "Pro League Finals",
+                game: "CS2",
+                format: "Team",
+                prizePool: "₹1,00,000",
+                status: "live",
+                countdown: "01:45:12",
+                slots: { current: 16, total: 32 },
+                registered: false
+            },
+            {
+                id: 3,
+                name: "Battle Royale Cup",
+                game: "BGMI",
+                format: "Squad",
+                prizePool: "₹25,000",
+                status: "upcoming",
+                countdown: "05:30:45",
+                slots: { current: 64, total: 64 },
+                registered: true
+            },
+            {
+                id: 4,
+                name: "Rocket League Masters",
+                game: "Rocket League",
+                format: "Team",
+                prizePool: "₹75,000",
+                status: "registration",
+                countdown: "12:20:15",
+                slots: { current: 8, total: 16 },
+                registered: false
+            },
+            {
+                id: 5,
+                name: "Apex Legends Showdown",
+                game: "Apex Legends",
+                format: "Squad",
+                prizePool: "₹40,000",
+                status: "upcoming",
+                countdown: "08:45:20",
+                slots: { current: 24, total: 32 },
+                registered: false
+            },
+            {
+                id: 6,
+                name: "Free Fire Championship",
+                game: "Free Fire",
+                format: "Squad",
+                prizePool: "₹60,000",
+                status: "live",
+                countdown: "03:12:08",
+                slots: { current: 48, total: 64 },
+                registered: false
+            },
+            {
+                id: 7,
+                name: "Call of Duty Warzone",
+                game: "Call of Duty",
+                format: "Squad",
+                prizePool: "₹35,000",
+                status: "registration",
+                countdown: "15:30:45",
+                slots: { current: 12, total: 24 },
+                registered: false
+            },
+            {
+                id: 8,
+                name: "Fortnite Build Battle",
+                game: "Fortnite",
+                format: "Solo",
+                prizePool: "₹20,000",
+                status: "upcoming",
+                countdown: "06:15:30",
+                slots: { current: 80, total: 100 },
+                registered: false
+            }
+        ];
+
+        // Generate tournament cards
+        function generateTournamentCards(tournamentsToShow = tournaments) {
+            const grid = document.getElementById('tournamentsGrid');
+            grid.innerHTML = '';
+
+            tournamentsToShow.forEach(tournament => {
+                const card = document.createElement('div');
+                card.className = 'tournament-card';
+                card.innerHTML = `
+                    <div class="tournament-status status-${tournament.status}">
+                        ${tournament.status.charAt(0).toUpperCase() + tournament.status.slice(1)}
+                    </div>
+                    <div class="tournament-header">
+                        <h3 class="tournament-name">${tournament.name}</h3>
+                        <div class="prize-pool">${tournament.prizePool}</div>
+                    </div>
+                    <div class="tournament-middle">
+                        <div class="countdown">${tournament.countdown}</div>
+                        <div class="game-info">
+                            <span class="game-name">${tournament.game}</span>
+                            <span class="tournament-type">${tournament.format}</span>
+                        </div>
+                    </div>
+                    <div class="tournament-bottom">
+                        <button class="register-btn ${tournament.registered ? 'registered' : ''}" 
+                                onclick="toggleRegistration(${tournament.id})">
+                            ${tournament.registered ? 'Registered' : 'Register Now'}
+                        </button>
+                        <div class="team-slots">
+                            <span class="slots-text">${tournament.slots.current}/${tournament.slots.total} Teams</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${(tournament.slots.current / tournament.slots.total) * 100}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Toggle registration
+        function toggleRegistration(tournamentId) {
+            const tournament = tournaments.find(t => t.id === tournamentId);
+            if (tournament) {
+                tournament.registered = !tournament.registered;
+                generateTournamentCards();
+            }
+        }
+
+        // Filter tournaments
+        function filterTournaments() {
+            const gameFilter = document.getElementById('gameFilterMain').value.toLowerCase();
+            const formatFilter = document.getElementById('formatFilterMain').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilterMain').value.toLowerCase();
+            const prizeFilter = document.getElementById('prizeFilter').value;
+
+            let filtered = tournaments.filter(tournament => {
+                const gameMatch = !gameFilter || tournament.game.toLowerCase().includes(gameFilter);
+                const formatMatch = !formatFilter || tournament.format.toLowerCase().includes(formatFilter);
+                const statusMatch = !statusFilter || tournament.status === statusFilter;
+                
+                let prizeMatch = true;
+                if (prizeFilter) {
+                    const prize = parseInt(tournament.prizePool.replace(/[₹,]/g, ''));
+                    switch (prizeFilter) {
+                        case '0-25000':
+                            prizeMatch = prize <= 25000;
+                            break;
+                        case '25000-50000':
+                            prizeMatch = prize > 25000 && prize <= 50000;
+                            break;
+                        case '50000-100000':
+                            prizeMatch = prize > 50000 && prize <= 100000;
+                            break;
+                        case '100000+':
+                            prizeMatch = prize > 100000;
+                            break;
+                    }
+                }
+
+                return gameMatch && formatMatch && statusMatch && prizeMatch;
+            });
+
+            generateTournamentCards(filtered);
+        }
+
+        // Search tournaments
+        function searchTournaments() {
+            const searchTerm = document.getElementById('tournamentSearch').value.toLowerCase();
+            const filtered = tournaments.filter(tournament => 
+                tournament.name.toLowerCase().includes(searchTerm) ||
+                tournament.game.toLowerCase().includes(searchTerm)
+            );
+            generateTournamentCards(filtered);
+        }
+
+        // Event listeners
+        document.getElementById('gameFilterMain').addEventListener('change', filterTournaments);
+        document.getElementById('formatFilterMain').addEventListener('change', filterTournaments);
+        document.getElementById('statusFilterMain').addEventListener('change', filterTournaments);
+        document.getElementById('prizeFilter').addEventListener('change', filterTournaments);
+        document.getElementById('tournamentSearch').addEventListener('input', searchTournaments);
+
+        // Dynamic greeting
+        function updateGreeting() {
+            const now = new Date();
+            const hour = now.getHours();
+            const greetingElement = document.getElementById('greetingText');
+            
+            if (hour < 12) {
+                greetingElement.textContent = 'Good morning,';
+            } else if (hour < 17) {
+                greetingElement.textContent = 'Good afternoon,';
+            } else {
+                greetingElement.textContent = 'Good evening,';
+            }
+        }
+
+        // Initialize
+        updateGreeting();
+        generateTournamentCards();
+
+        console.log('🎮 Tournaments page loaded successfully!');
+    </script>
+    
+    <!-- Include API and JavaScript files -->
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/tournaments.js"></script>
+</body>
+</html>

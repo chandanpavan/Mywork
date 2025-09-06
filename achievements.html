@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Achievements - GRINDZONE</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0F0F0F 0%, #1A1A1A 100%);
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(90deg, #6B46C1 0%, #EC4899 100%);
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 20px rgba(107, 70, 193, 0.3);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #F472B6, #A855F7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(244, 114, 182, 0.5);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(45, 45, 45, 0.9);
+            padding: 0.75rem 1.25rem;
+            border-bottom: 1px solid rgba(107, 70, 193, 0.25);
+            backdrop-filter: blur(6px);
+        }
+
+        .nav-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .nav-center {
+            display: flex;
+            gap: 0.75rem;
+            flex: 1;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-group {
+            position: relative;
+        }
+
+        .search-input {
+            background: rgba(55, 65, 81, 0.8);
+            border: 2px solid rgba(107, 70, 193, 0.3);
+            border-radius: 25px;
+            padding: 0.6rem 0.9rem;
+            color: white;
+            width: 200px;
+            min-height: 40px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #EC4899;
+            box-shadow: 0 0 15px rgba(236, 72, 153, 0.3);
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .nav-icons {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .nav-icon {
+            width: 38px;
+            height: 38px;
+            background: #000000;
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .nav-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke: #ffffff;
+            stroke-width: 1.8;
+            fill: none;
+        }
+
+        /* Main Layout */
+        .main-layout {
+            display: flex;
+            min-height: calc(100vh - 140px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: rgba(30, 30, 30, 0.96);
+            padding: 1.5rem 1rem;
+            border-right: 1px solid rgba(107, 70, 193, 0.25);
+            backdrop-filter: blur(4px);
+        }
+
+        .sidebar-logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-logo h2 {
+            background: linear-gradient(45deg, #6B46C1, #EC4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.5rem;
+        }
+
+        .greeting {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: linear-gradient(135deg, rgba(107, 70, 193, 0.1), rgba(236, 72, 153, 0.1));
+            border-radius: 10px;
+            border: 1px solid rgba(168, 85, 247, 0.2);
+        }
+
+        .greeting-text {
+            font-size: 0.9rem;
+            color: #A855F7;
+            margin-bottom: 0.5rem;
+        }
+
+        .username {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .menu-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            padding: 0.8rem 0.9rem;
+            color: #e5e7eb;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.25s ease;
+            position: relative;
+        }
+
+        .menu-link:hover, .menu-link.active {
+            background: linear-gradient(135deg, rgba(107, 70, 193, 0.18), rgba(236, 72, 153, 0.18));
+            transform: translateX(4px);
+        }
+
+        .menu-link.active::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 10px;
+            bottom: 10px;
+            width: 3px;
+            background: linear-gradient(180deg, #6B46C1, #EC4899);
+            border-radius: 3px;
+        }
+
+        .menu-icon {
+            width: 34px;
+            height: 34px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background: #000000;
+        }
+
+        .menu-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke: #ffffff;
+            stroke-width: 1.8;
+            fill: none;
+        }
+
+        .menu-link:hover .menu-icon {
+            background: #111111;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            border-top: 1px solid rgba(107, 70, 193, 0.3);
+            padding-top: 1rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, #6B46C1, #EC4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.1rem;
+        }
+
+        /* Progress Overview */
+        .progress-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .progress-card {
+            background: rgba(45, 45, 45, 0.8);
+            border: 1px solid rgba(107, 70, 193, 0.3);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .progress-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6B46C1, #EC4899);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.5rem;
+        }
+
+        .progress-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #EC4899;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        /* Achievement Categories */
+        .categories-section {
+            margin-bottom: 2rem;
+        }
+
+        .categories-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            background: rgba(45, 45, 45, 0.8);
+            border: 1px solid rgba(107, 70, 193, 0.3);
+            border-radius: 15px;
+            padding: 0.5rem;
+        }
+
+        .category-tab {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .category-tab.active {
+            background: linear-gradient(135deg, #6B46C1, #EC4899);
+            color: white;
+            box-shadow: 0 4px 15px rgba(107, 70, 193, 0.3);
+        }
+
+        .category-tab:hover:not(.active) {
+            background: rgba(107, 70, 193, 0.2);
+            color: white;
+        }
+
+        /* Achievements Grid */
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .achievement-card {
+            background: rgba(45, 45, 45, 0.8);
+            border: 2px solid rgba(107, 70, 193, 0.3);
+            border-radius: 15px;
+            padding: 1.5rem;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .achievement-card.unlocked {
+            border-color: #10B981;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(45, 45, 45, 0.8));
+        }
+
+        .achievement-card.locked {
+            opacity: 0.6;
+            border-color: rgba(107, 70, 193, 0.2);
+        }
+
+        .achievement-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(107, 70, 193, 0.3);
+        }
+
+        .achievement-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .achievement-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            position: relative;
+        }
+
+        .achievement-icon.unlocked {
+            background: linear-gradient(135deg, #10B981, #059669);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+        }
+
+        .achievement-icon.locked {
+            background: linear-gradient(135deg, #6B7280, #4B5563);
+        }
+
+        .achievement-icon.rare {
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
+        }
+
+        .achievement-icon.epic {
+            background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+        }
+
+        .achievement-icon.legendary {
+            background: linear-gradient(135deg, #EF4444, #DC2626);
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+        }
+
+        .achievement-info h3 {
+            color: #A855F7;
+            margin-bottom: 0.25rem;
+        }
+
+        .achievement-rarity {
+            font-size: 0.8rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        .rarity-common {
+            background: rgba(107, 70, 193, 0.3);
+            color: #A855F7;
+        }
+
+        .rarity-rare {
+            background: rgba(245, 158, 11, 0.3);
+            color: #F59E0B;
+        }
+
+        .rarity-epic {
+            background: rgba(139, 92, 246, 0.3);
+            color: #8B5CF6;
+        }
+
+        .rarity-legendary {
+            background: rgba(239, 68, 68, 0.3);
+            color: #EF4444;
+        }
+
+        .achievement-description {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .achievement-progress {
+            margin-bottom: 1rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #6B46C1, #EC4899);
+            transition: width 0.5s ease;
+        }
+
+        .progress-text {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .achievement-reward {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #F59E0B;
+            font-weight: bold;
+        }
+
+        .achievement-date {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Recent Achievements */
+        .recent-achievements {
+            margin-top: 3rem;
+        }
+
+        .recent-title {
+            font-size: 1.8rem;
+            background: linear-gradient(45deg, #6B46C1, #EC4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1.5rem;
+        }
+
+        .recent-list {
+            background: rgba(45, 45, 45, 0.8);
+            border: 1px solid rgba(107, 70, 193, 0.3);
+            border-radius: 15px;
+            padding: 1.5rem;
+        }
+
+        .recent-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(107, 70, 193, 0.2);
+        }
+
+        .recent-item:last-child {
+            border-bottom: none;
+        }
+
+        .recent-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10B981, #059669);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .recent-info h4 {
+            color: #A855F7;
+            margin-bottom: 0.25rem;
+        }
+
+        .recent-info p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .recent-date {
+            margin-left: auto;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.8rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-layout {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                position: fixed;
+                top: 0;
+                left: -100%;
+                height: 100vh;
+                z-index: 1000;
+                transition: left 0.3s ease;
+            }
+
+            .sidebar.open {
+                left: 0;
+            }
+
+            .categories-tabs {
+                flex-direction: column;
+            }
+
+            .achievements-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .progress-overview {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animations */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .achievement-card {
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.5); }
+            50% { box-shadow: 0 0 30px rgba(16, 185, 129, 0.8); }
+        }
+
+        .achievement-icon.unlocked {
+            animation: glow 2s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">GRINDZONE</div>
+            <div class="header-right">
+                <span>Achievement System</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <div></div>
+            <div class="nav-center">
+                <div class="search-group">
+                    <input type="text" class="search-input" placeholder="Search achievements..." id="achievementSearch">
+                </div>
+                <div class="search-group">
+                    <select class="search-input" id="rarityFilter">
+                        <option value="">All Rarities</option>
+                        <option value="common">Common</option>
+                        <option value="rare">Rare</option>
+                        <option value="epic">Epic</option>
+                        <option value="legendary">Legendary</option>
+                    </select>
+                </div>
+                <div class="search-group">
+                    <select class="search-input" id="statusFilter">
+                        <option value="">All Status</option>
+                        <option value="unlocked">Unlocked</option>
+                        <option value="locked">Locked</option>
+                    </select>
+                </div>
+            </div>
+            <div class="nav-icons">
+                <div class="nav-icon" title="Chat">
+                    <svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 11-3.3-6.5"/><path d="M21 12v7l-4-2"/></svg>
+                </div>
+                <div class="nav-icon" title="Notifications">
+                    <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 10-12 0c0 7-3 7-3 7h18s-3 0-3-7"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+                </div>
+                <div class="nav-icon" title="Profile">
+                    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="3"/></svg>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <h2>GRINDZONE</h2>
+            </div>
+
+            <div class="greeting">
+                <div class="greeting-text" id="greetingText">Good evening,</div>
+                <div class="username">GamerPro2024</div>
+            </div>
+
+            <ul class="sidebar-menu">
+                <li class="menu-item">
+                    <a href="grindzone.html" class="menu-link">
+                        <span class="menu-icon">
+                            <svg viewBox="0 0 24 24"><path d="M3 10.5l9-7 9 7"/><path d="M5 10v9a1 1 0 001 1h4v-6h4v6h4a1 1 0 001-1v-9"/></svg>
+                        </span>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="tournaments.html" class="menu-link">
+                        <span class="menu-icon">
+                            <svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="3"/><path d="M6 21l6-4 6 4"/><path d="M6 15l6-4 6 4"/></svg>
+                        </span>
+                        <span>Tournaments</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="stream.html" class="menu-link">
+                        <span class="menu-icon">
+                            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8"/></svg>
+                        </span>
+                        <span>Stream</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="leaderboard.html" class="menu-link">
+                        <span class="menu-icon">
+                            <svg viewBox="0 0 24 24"><path d="M3 12h18"/><path d="M7 12a5 5 0 1010 0 5 5 0 10-10 0z"/></svg>
+                        </span>
+                        <span>Leaderboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="achievements.html" class="menu-link active">
+                        <span class="menu-icon">
+                            <svg viewBox="0 0 24 24"><path d="M12 3l2.5 5 5.5.8-4 3.9.9 5.6-4.9-2.6-4.9 2.6.9-5.6-4-3.9 5.5-.8z"/></svg>
+                        </span>
+                        <span>Achievements</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="stats.html" class="menu-link">
+                        <span class="menu-icon">
+                            <svg viewBox="0 0 24 24"><path d="M3 3h18v6H3z"/><path d="M3 15h18v6H3z"/><path d="M3 9h18"/></svg>
+                        </span>
+                        <span>Stats</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-bottom">
+                <div class="menu-item">
+                    <a href="profile.html" class="menu-link">
+                        <span class="menu-icon">
+                            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="3"/></svg>
+                        </span>
+                        <span>Profile</span>
+                    </a>
+                </div>
+                <div class="menu-item">
+                    <a href="login.html" class="menu-link">
+                        <span class="menu-icon">
+                            <svg viewBox="0 0 24 24"><path d="M10 3h7a2 2 0 012 2v14a2 2 0 01-2 2h-7"/><path d="M15 12H3"/><path d="M7 8l-4 4 4 4"/></svg>
+                        </span>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">Achievements</h1>
+                <p class="page-subtitle">Unlock badges and show off your gaming prowess</p>
+            </div>
+
+            <!-- Progress Overview -->
+            <div class="progress-overview">
+                <div class="progress-card">
+                    <div class="progress-icon">🏆</div>
+                    <div class="progress-value">24</div>
+                    <div class="progress-label">Achievements Unlocked</div>
+                </div>
+                <div class="progress-card">
+                    <div class="progress-icon">⭐</div>
+                    <div class="progress-value">1,250</div>
+                    <div class="progress-label">Total Points</div>
+                </div>
+                <div class="progress-card">
+                    <div class="progress-icon">🎯</div>
+                    <div class="progress-value">68%</div>
+                    <div class="progress-label">Completion Rate</div>
+                </div>
+                <div class="progress-card">
+                    <div class="progress-icon">🔥</div>
+                    <div class="progress-value">7</div>
+                    <div class="progress-label">Streak Days</div>
+                </div>
+            </div>
+
+            <!-- Achievement Categories -->
+            <div class="categories-section">
+                <div class="categories-tabs">
+                    <button class="category-tab active" onclick="switchCategory('all')">All</button>
+                    <button class="category-tab" onclick="switchCategory('tournament')">Tournaments</button>
+                    <button class="category-tab" onclick="switchCategory('combat')">Combat</button>
+                    <button class="category-tab" onclick="switchCategory('social')">Social</button>
+                    <button class="category-tab" onclick="switchCategory('special')">Special</button>
+                </div>
+
+                <div class="achievements-grid" id="achievementsGrid">
+                    <!-- Achievements will be generated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Recent Achievements -->
+            <div class="recent-achievements">
+                <h3 class="recent-title">Recent Achievements</h3>
+                <div class="recent-list" id="recentList">
+                    <!-- Recent achievements will be generated by JavaScript -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Achievement data
+        const achievements = [
+            {
+                id: 1,
+                title: "First Victory",
+                description: "Win your first tournament match",
+                rarity: "common",
+                status: "unlocked",
+                progress: 100,
+                reward: "100 XP",
+                icon: "🏆",
+                category: "tournament",
+                date: "2024-01-15"
+            },
+            {
+                id: 2,
+                title: "Kill Streak Master",
+                description: "Get 10 kills in a single match",
+                rarity: "rare",
+                status: "unlocked",
+                progress: 100,
+                reward: "250 XP",
+                icon: "⚔️",
+                category: "combat",
+                date: "2024-01-14"
+            },
+            {
+                id: 3,
+                title: "Social Butterfly",
+                description: "Make 50 friends on the platform",
+                rarity: "common",
+                status: "unlocked",
+                progress: 100,
+                reward: "150 XP",
+                icon: "👥",
+                category: "social",
+                date: "2024-01-13"
+            },
+            {
+                id: 4,
+                title: "Tournament Champion",
+                description: "Win 5 tournaments",
+                rarity: "epic",
+                status: "unlocked",
+                progress: 100,
+                reward: "500 XP",
+                icon: "👑",
+                category: "tournament",
+                date: "2024-01-12"
+            },
+            {
+                id: 5,
+                title: "Headshot Hunter",
+                description: "Get 100 headshots",
+                rarity: "rare",
+                status: "unlocked",
+                progress: 100,
+                reward: "300 XP",
+                icon: "🎯",
+                category: "combat",
+                date: "2024-01-11"
+            },
+            {
+                id: 6,
+                title: "Stream Watcher",
+                description: "Watch 100 hours of streams",
+                rarity: "common",
+                status: "unlocked",
+                progress: 100,
+                reward: "200 XP",
+                icon: "📺",
+                category: "social",
+                date: "2024-01-10"
+            },
+            {
+                id: 7,
+                title: "Perfect Score",
+                description: "Win a match without dying",
+                rarity: "legendary",
+                status: "unlocked",
+                progress: 100,
+                reward: "1000 XP",
+                icon: "💎",
+                category: "special",
+                date: "2024-01-09"
+            },
+            {
+                id: 8,
+                title: "Team Player",
+                description: "Win 20 team matches",
+                rarity: "common",
+                status: "unlocked",
+                progress: 100,
+                reward: "180 XP",
+                icon: "🤝",
+                category: "social",
+                date: "2024-01-08"
+            },
+            {
+                id: 9,
+                title: "Rapid Fire",
+                description: "Get 50 kills in under 5 minutes",
+                rarity: "epic",
+                status: "locked",
+                progress: 75,
+                reward: "400 XP",
+                icon: "🔥",
+                category: "combat"
+            },
+            {
+                id: 10,
+                title: "Grand Master",
+                description: "Reach the top 10 in global rankings",
+                rarity: "legendary",
+                status: "locked",
+                progress: 60,
+                reward: "1500 XP",
+                icon: "🌟",
+                category: "special"
+            },
+            {
+                id: 11,
+                title: "Chat Master",
+                description: "Send 1000 messages in chat",
+                rarity: "common",
+                status: "locked",
+                progress: 45,
+                reward: "120 XP",
+                icon: "💬",
+                category: "social"
+            },
+            {
+                id: 12,
+                title: "Tournament Legend",
+                description: "Win 25 tournaments",
+                rarity: "legendary",
+                status: "locked",
+                progress: 20,
+                reward: "2000 XP",
+                icon: "🏆",
+                category: "tournament"
+            }
+        ];
+
+        let currentCategory = 'all';
+
+        // Generate achievement cards
+        function generateAchievements(filteredAchievements = achievements) {
+            const grid = document.getElementById('achievementsGrid');
+            grid.innerHTML = '';
+
+            filteredAchievements.forEach(achievement => {
+                const card = document.createElement('div');
+                card.className = `achievement-card ${achievement.status}`;
+                
+                const progressBar = achievement.status === 'locked' ? `
+                    <div class="achievement-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${achievement.progress}%"></div>
+                        </div>
+                        <div class="progress-text">${achievement.progress}% Complete</div>
+                    </div>
+                ` : '';
+
+                const date = achievement.date ? `
+                    <div class="achievement-date">${new Date(achievement.date).toLocaleDateString()}</div>
+                ` : '';
+
+                card.innerHTML = `
+                    ${date}
+                    <div class="achievement-header">
+                        <div class="achievement-icon ${achievement.status} ${achievement.rarity}">
+                            ${achievement.icon}
+                        </div>
+                        <div class="achievement-info">
+                            <h3>${achievement.title}</h3>
+                            <span class="achievement-rarity rarity-${achievement.rarity}">
+                                ${achievement.rarity.charAt(0).toUpperCase() + achievement.rarity.slice(1)}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="achievement-description">${achievement.description}</div>
+                    ${progressBar}
+                    <div class="achievement-reward">
+                        <span>💰</span>
+                        <span>${achievement.reward}</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Generate recent achievements
+        function generateRecentAchievements() {
+            const recentList = document.getElementById('recentList');
+            recentList.innerHTML = '';
+
+            const recentAchievements = achievements
+                .filter(a => a.status === 'unlocked' && a.date)
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .slice(0, 5);
+
+            recentAchievements.forEach(achievement => {
+                const item = document.createElement('div');
+                item.className = 'recent-item';
+                item.innerHTML = `
+                    <div class="recent-icon">${achievement.icon}</div>
+                    <div class="recent-info">
+                        <h4>${achievement.title}</h4>
+                        <p>${achievement.description}</p>
+                    </div>
+                    <div class="recent-date">${new Date(achievement.date).toLocaleDateString()}</div>
+                `;
+                recentList.appendChild(item);
+            });
+        }
+
+        // Switch category
+        function switchCategory(category) {
+            // Update tab buttons
+            document.querySelectorAll('.category-tab').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            currentCategory = category;
+
+            let filteredAchievements = achievements;
+            if (category !== 'all') {
+                filteredAchievements = achievements.filter(a => a.category === category);
+            }
+
+            generateAchievements(filteredAchievements);
+        }
+
+        // Search achievements
+        function searchAchievements() {
+            const searchTerm = document.getElementById('achievementSearch').value.toLowerCase();
+            const rarityFilter = document.getElementById('rarityFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+
+            let filtered = achievements;
+
+            if (currentCategory !== 'all') {
+                filtered = filtered.filter(a => a.category === currentCategory);
+            }
+
+            if (searchTerm) {
+                filtered = filtered.filter(a => 
+                    a.title.toLowerCase().includes(searchTerm) ||
+                    a.description.toLowerCase().includes(searchTerm)
+                );
+            }
+
+            if (rarityFilter) {
+                filtered = filtered.filter(a => a.rarity === rarityFilter);
+            }
+
+            if (statusFilter) {
+                filtered = filtered.filter(a => a.status === statusFilter);
+            }
+
+            generateAchievements(filtered);
+        }
+
+        // Dynamic greeting
+        function updateGreeting() {
+            const now = new Date();
+            const hour = now.getHours();
+            const greetingElement = document.getElementById('greetingText');
+            
+            if (hour < 12) {
+                greetingElement.textContent = 'Good morning,';
+            } else if (hour < 17) {
+                greetingElement.textContent = 'Good afternoon,';
+            } else {
+                greetingElement.textContent = 'Good evening,';
+            }
+        }
+
+        // Event listeners
+        document.getElementById('achievementSearch').addEventListener('input', searchAchievements);
+        document.getElementById('rarityFilter').addEventListener('change', searchAchievements);
+        document.getElementById('statusFilter').addEventListener('change', searchAchievements);
+
+        // Initialize
+        updateGreeting();
+        generateAchievements();
+        generateRecentAchievements();
+
+        console.log('🎮 Achievements page loaded successfully!');
+    </script>
+</body>
+</html>
